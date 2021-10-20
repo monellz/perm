@@ -27,8 +27,6 @@ class Perm {
 public:
   virtual bool perm(std::vector<uint32_t>& result, const std::vector<uint32_t>& pattern, int idx) = 0;
   virtual ~Perm() {}
-protected:
-  static const int MAX_NUM = 10;
 };
 
 #endif
