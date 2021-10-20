@@ -1,59 +1,49 @@
 #include "dict_order.h"
 
-std::vector<uint32_t> DictOrderBaseline::perm(const std::vector<uint32_t>& pattern, int idx) {
-  std::vector<uint32_t> new_pattern(pattern.size());
-  dbg(pattern, idx);
-  if (idx == 0 || pattern.size() <= 1) return new_pattern;
-
-  static uint32_t pattern_inter[1024];
-  static uint32_t idx_inter[1024];
-  int pattern_inter_size = 0, idx_inter_size = 0;
-
-  for (int i = pattern.size() - 2; i >= 0; i--) {
-    int t = 0;
-    for (int j = i + 1; j < pattern.size(); ++j) {
-      if (pattern[j] < pattern[i]) t++;
-    }
-    pattern_inter[pattern_inter_size++] = t;
-  }
-  dbg(std::vector<uint32_t>(pattern_inter, pattern_inter + pattern_inter_size));
-  // cantor expansion
-  for (int i = 2, n = idx; n != 0; ++i) {
-    idx_inter[idx_inter_size++] = n % i;
+static __attribute__((unused)) std::vector<uint32_t> inter(int n) {
+  std::vector<uint32_t> r;
+  for (int i = 2; n != 0; ++i) {
+    r.push_back(n % i);
     n /= i;
   }
-  dbg(std::vector<uint32_t>(idx_inter, idx_inter + idx_inter_size));
+  return r;
+}
 
-  // padding
-  int size = max(pattern_inter_size, idx_inter_size);
-  // 是否会进位？ proof
-  for (int i = pattern_inter_size; i < size; ++i) pattern_inter[i] = 0;
-  for (int i = idx_inter_size; i < size; ++i) idx_inter[i] = 0;
-  dbg(size);
-
-  // add
-  for (int i = 0, base = 2, carry = 0; i < size; ++i) {
-    pattern_inter[i] += idx_inter[i] + carry;
-    carry = pattern_inter[i] / base;
-    pattern_inter[i] %= base;
-    base++;
+bool DictOrderBaseline::perm(std::vector<uint32_t>& result, const std::vector<uint32_t>& pattern, int idx) {
+  // dbg(pattern, idx);
+  int num = pattern.size();
+  result.resize(num);
+  if (num == 0 || num > this->MAX_NUM) return false;
+  if (idx == 0 || num <= 1) {
+    for (int i = 0; i < num; ++i) result[i] = pattern[i];
+    return true;
   }
-  dbg(std::vector<uint32_t>(pattern_inter, pattern_inter + size));
+
+  uint32_t pattern_cantor = 0;
+  for (int i = num - 2, k = 1; i >= 0; i--, k++) {
+    int t = 0;
+    for (int j = i + 1; j < num; ++j) {
+      if (pattern[j] < pattern[i]) t++;
+    }
+    pattern_cantor += FACTORIAL[k] * t;
+  }
+  // dbg(inter(pattern_cantor));
+  int result_cantor = pattern_cantor + idx;
+  // dbg(inter(result_cantor));
 
   // generate new pattern
-  std::vector<uint32_t> tmp(pattern.size());
-  for (int i = 0; i < tmp.size(); ++i) {
+  std::vector<uint32_t> tmp(num);
+  for (int i = 0; i < num; ++i) {
     tmp[i] = i + 1;
   }
-  dbg(tmp);
-
-  for (int i = 0; i < new_pattern.size(); ++i) {
-    new_pattern[i] = tmp[pattern_inter[size - 1]];
-    tmp.erase(tmp.begin() + pattern_inter[size - 1]);
+  // dbg(tmp);
+  for (int base = num - 1, n = result_cantor, i = 0; base >= 0; --base, ++i) {
+    int t = n / FACTORIAL[base];
+    n %= FACTORIAL[base];
+    result[i] = tmp[t];
+    tmp.erase(tmp.begin() + t);
     std::sort(tmp.begin(), tmp.end());
-    size--;
-  }
-  dbg(new_pattern);
-
-  return new_pattern;
+  } 
+  // dbg(result);
+  return true;
 }

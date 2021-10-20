@@ -8,7 +8,7 @@
 
 class DictOrderBaseline: public Perm {
 public:
-  virtual std::vector<uint32_t> perm(const std::vector<uint32_t>& base, int idx);
+  virtual bool perm(std::vector<uint32_t>& result, const std::vector<uint32_t>& pattern, int idx);
 };
 
 #endif

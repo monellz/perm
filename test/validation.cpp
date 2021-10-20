@@ -8,11 +8,20 @@ using namespace testing;
 TEST(DictOrderBaseline, simple) {
   DictOrderBaseline order;
 
-  std::vector<uint32_t> base;
+  std::vector<uint32_t> pattern;
+  int idx;
   std::vector<uint32_t> expect;
+  std::vector<uint32_t> result;
 
-  base = {8, 1, 2, 3, 7, 4, 5, 6};
+  pattern = {8, 1, 2, 3, 7, 4, 5, 6};
+  idx = 2015;
   expect = {8, 3, 6, 7, 4, 5, 2, 1};
-  auto&& r = order.perm(base, 2015);
-  EXPECT_THAT(r, ElementsAreArray(expect));
+  EXPECT_TRUE(order.perm(result, pattern, idx));
+  EXPECT_THAT(result, ElementsAreArray(expect));
+
+  pattern = {8, 3, 6, 7, 4, 5, 2, 1};
+  idx = -2015;
+  expect = {8, 1, 2, 3, 7, 4, 5, 6};
+  EXPECT_TRUE(order.perm(result, pattern, idx));
+  EXPECT_THAT(result, ElementsAreArray(expect));
 }
