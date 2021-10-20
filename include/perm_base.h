@@ -3,6 +3,8 @@
 
 #include <cstdint>
 #include <cstdlib>
+#include <cstring>
+
 #include <vector>
 
 #include "util.h"

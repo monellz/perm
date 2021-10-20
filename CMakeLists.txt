@@ -21,6 +21,10 @@ include_directories(${PROJECT_SOURCE_DIR}/3rdparty)
 add_library(dictorder STATIC
   src/dict_order.cpp
 )
+add_library(ascendorder STATIC
+  src/ascend_order.cpp
+)
+
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/3rdparty/googletest)
 

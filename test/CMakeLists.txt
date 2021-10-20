@@ -11,6 +11,7 @@ target_link_libraries(validation
   gmock
 
   dictorder
+  ascendorder
 )
 target_link_libraries(benchmark
   gtest_main
