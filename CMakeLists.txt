@@ -24,6 +24,10 @@ add_library(dictorder STATIC
 add_library(ascendorder STATIC
   src/ascend_order.cpp
 )
+add_library(descendorder STATIC
+  src/descend_order.cpp
+)
+
 
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/3rdparty/googletest)
