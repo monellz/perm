@@ -13,6 +13,7 @@ target_link_libraries(validation
   dictorder
   ascendorder
   descendorder
+  sjtorder
 )
 target_link_libraries(benchmark
   gtest_main

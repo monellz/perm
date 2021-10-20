@@ -27,7 +27,9 @@ add_library(ascendorder STATIC
 add_library(descendorder STATIC
   src/descend_order.cpp
 )
-
+add_library(sjtorder STATIC
+  src/sjt_order.cpp
+)
 
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/3rdparty/googletest)

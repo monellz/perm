@@ -4,6 +4,7 @@
 #include "dict_order.h"
 #include "ascend_order.h"
 #include "descend_order.h"
+#include "sjt_order.h"
 
 
 using namespace testing;
@@ -89,12 +90,41 @@ TEST(DescendOrderBaseline, simple) {
   EXPECT_THAT(result, ElementsAreArray(expect));
 }
 
+TEST(SJTOrderBaseline, simple) {
+  SJTOrderBaseline order;
+
+  std::vector<uint32_t> pattern;
+  int idx;
+  std::vector<uint32_t> expect;
+  std::vector<uint32_t> result;
+
+  pattern = {4, 8, 6, 7, 3, 2, 5, 1};
+  idx = 2015;
+  expect = {8, 3, 6, 7, 4, 5, 2, 1};
+  EXPECT_TRUE(order.perm(result, pattern, idx));
+  EXPECT_THAT(result, ElementsAreArray(expect));
+
+  pattern = {8, 3, 6, 7, 4, 5, 2, 1};
+  idx = -2015;
+  expect = {4, 8, 6, 7, 3, 2, 5, 1};
+  EXPECT_TRUE(order.perm(result, pattern, idx));
+  EXPECT_THAT(result, ElementsAreArray(expect));
+
+  pattern = {8, 3, 6, 7, 4, 5, 2, 1};
+  idx = -2021;
+  expect = {4, 7, 6, 3, 8, 2, 5, 1};
+  EXPECT_TRUE(order.perm(result, pattern, idx));
+  EXPECT_THAT(result, ElementsAreArray(expect));
+}
+
+
 
 
 TEST(All, badcase) {
   DictOrderBaseline dob;
   AscendOrderBaseline aob;
   DescendOrderBaseline deob;
+  SJTOrderBaseline sjtob;
   
   std::vector<uint32_t> pattern;
   int idx;
@@ -105,10 +135,12 @@ TEST(All, badcase) {
   EXPECT_FALSE(dob.perm(result, pattern, idx));
   EXPECT_FALSE(aob.perm(result, pattern, idx));
   EXPECT_FALSE(deob.perm(result, pattern, idx));
+  EXPECT_FALSE(sjtob.perm(result, pattern, idx));
 
   pattern = {4, 3, 2, 1};
-  idx = 2;
+  idx = 20;
   EXPECT_FALSE(dob.perm(result, pattern, idx));
   EXPECT_FALSE(aob.perm(result, pattern, idx));
   EXPECT_FALSE(deob.perm(result, pattern, idx));
+  EXPECT_FALSE(sjtob.perm(result, pattern, idx));
 }
