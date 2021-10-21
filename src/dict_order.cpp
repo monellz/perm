@@ -108,3 +108,64 @@ bool perm_small(std::vector<uint32_t>& result, const std::vector<uint32_t>& patt
   // dbg(result);
   return true;
 }
+
+bool DictOrder::perm(std::vector<uint32_t>& result, const std::vector<uint32_t>& pattern, int idx) {
+  //dbg(idx, pattern);
+  int num = pattern.size();
+  result.resize(num);
+  if (num == 0) return false;
+  if (idx == 0 || num <= 1) {
+    for (int i = 0; i < num; ++i) result[i] = pattern[i];
+    return true;
+  }
+
+  std::vector<int> pattern_inter(num - 1, 0);
+  // 树状数组
+  std::vector<int> bit(num + 1, 0);
+  BIT_UPDATE(bit, num, pattern.back(), 1);
+  for (int i = num - 2, k = 0; i >= 0; --i, ++k) {
+    int t;
+    BIT_QUERY(bit, num, pattern[i], t);
+    BIT_UPDATE(bit, num, pattern[i], 1);
+    pattern_inter[k] = t;
+  }
+  //dbg(pattern_inter);
+  std::vector<int> idx_inter(num - 1, 0);
+  for (int i = 0, base = 2, n = idx; n != 0; ++base, ++i) {
+    idx_inter[i] = n % base;
+    n /= base;
+  }
+  //dbg(idx_inter);
+
+  // add
+  int carry = 0;
+  for (int i = 0, base = 2; i < num - 1; ++i, ++base) {
+    pattern_inter[i] += idx_inter[i] + carry;
+    carry = pattern_inter[i] / base;
+    pattern_inter[i] %= base;
+    if (pattern_inter[i] < 0) {
+      pattern_inter[i] += base;
+      carry -= 1;
+    }
+    //dbg(carry);
+  }
+  if (carry != 0) return false;
+  //dbg(pattern_inter);
+
+  // generate new pattern
+  std::vector<uint32_t> tmp(num);
+  for (int i = 0; i < num; ++i) {
+    tmp[i] = i + 1;
+  }
+  //dbg(tmp);
+  for (int i = 0; i < num - 1; ++i) {
+    int t = pattern_inter.back();
+    pattern_inter.pop_back();
+    result[i] = tmp[t];
+    tmp.erase(tmp.begin() + t);
+    std::sort(tmp.begin(), tmp.end());
+  }
+  result[num - 1] = tmp[0];
+  //dbg(result);
+  return true;
+}

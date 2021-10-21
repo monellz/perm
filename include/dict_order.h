@@ -11,4 +11,9 @@ public:
   virtual bool perm(std::vector<uint32_t>& result, const std::vector<uint32_t>& pattern, int idx);
 };
 
+class DictOrder: public Perm {
+public:
+  virtual bool perm(std::vector<uint32_t>& result, const std::vector<uint32_t>& pattern, int idx);
+};
+
 #endif
